@@ -1,0 +1,8 @@
+{
+	"files": {
+		"includes": ["**", "!dist", "!node_modules", "!server/src/generated/prisma"]
+	},
+	"formatter": {
+		"indentStyle": "tab"
+	}
+}
