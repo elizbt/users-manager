@@ -1,30 +1,12 @@
-export type UserStatus = "Alive" | "Dead" | "unknown";
+export type {
+	PaginatedUsers,
+	PaginationMeta,
+	User,
+	UserOrigin,
+	UserStatus,
+} from "../../../shared/types/user";
+
 export type UserStatusFilter = "" | "alive" | "dead" | "unknown";
-
-export interface User {
-	id: number;
-	name: string;
-	status: UserStatus;
-	species: string;
-	episode: string[];
-	origin: {
-		name: string;
-		url: string;
-	};
-	createdAt: string;
-}
-
-export interface PaginationMeta {
-	page: number;
-	limit: number;
-	totalItems: number;
-	totalPages: number;
-}
-
-export interface PaginatedUsers {
-	data: User[];
-	pagination: PaginationMeta;
-}
 
 export interface ListUsersParams {
 	name: string;

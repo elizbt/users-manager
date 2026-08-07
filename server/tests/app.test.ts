@@ -1,12 +1,12 @@
 import type { FastifyInstance } from "fastify";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { PaginatedUsers, User } from "../../shared/types/user.js";
 import { buildApp } from "../src/app.js";
 import {
 	deleteUser,
 	findUsers,
 	updateUserName,
 } from "../src/services/user-service.js";
-import type { PaginatedUsers, User } from "../src/types/user.js";
 
 vi.mock("../src/services/user-service.js", () => ({
 	findUsers: vi.fn(),
@@ -82,7 +82,7 @@ describe("Rotas de usuários", () => {
 
 		expect(findUsers).toHaveBeenCalledWith({
 			name: "Rick",
-			status: "alive",
+			status: "Alive",
 			page: 1,
 			limit: 10,
 		});

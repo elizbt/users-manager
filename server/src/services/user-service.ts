@@ -1,10 +1,10 @@
+import type { PaginatedUsers, User } from "../../../shared/types/user.js";
 import { prisma } from "../database.js";
 import type {
 	User as DatabaseUser,
 	Prisma,
 } from "../generated/prisma/client.js";
 import type { ListUsersQuery } from "../schemas/user-schemas.js";
-import type { PaginatedUsers, User } from "../types/user.js";
 
 function mapUser(user: DatabaseUser): User {
 	return {
@@ -24,18 +24,12 @@ function mapUser(user: DatabaseUser): User {
 export async function findUsers(
 	filters: ListUsersQuery,
 ): Promise<PaginatedUsers> {
-	const status =
-		filters.status === "alive"
-			? "Alive"
-			: filters.status === "dead"
-				? "Dead"
-				: filters.status;
 	const where: Prisma.UserWhereInput = {
 		...(filters.name && {
 			name: { contains: filters.name, mode: "insensitive" },
 		}),
-		...(status && {
-			status,
+		...(filters.status && {
+			status: filters.status,
 		}),
 	};
 	const skip = (filters.page - 1) * filters.limit;

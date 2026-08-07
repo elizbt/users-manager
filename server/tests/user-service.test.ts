@@ -34,7 +34,7 @@ describe("Serviço de usuários", () => {
 
 		const result = await findUsers({
 			name: "Rick",
-			status: "alive",
+			status: "Alive",
 			page: 2,
 			limit: 10,
 		});

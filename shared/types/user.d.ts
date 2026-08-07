@@ -15,7 +15,7 @@ export interface User {
 	createdAt: string;
 }
 
-export interface Pagination {
+export interface PaginationMeta {
 	page: number;
 	limit: number;
 	totalItems: number;
@@ -24,5 +24,5 @@ export interface Pagination {
 
 export interface PaginatedUsers {
 	data: User[];
-	pagination: Pagination;
+	pagination: PaginationMeta;
 }
