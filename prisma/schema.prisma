@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../server/src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserStatus {
+  Alive
+  Dead
+  unknown
+}
+
+model User {
+  id         Int        @id
+  name       String     @db.VarChar(100)
+  status     UserStatus
+  species    String     @db.VarChar(100)
+  originName String     @map("origin_name")
+  originUrl  String     @map("origin_url")
+  episode    String[]   @default([])
+  createdAt  DateTime   @map("created_at") @db.Timestamptz(3)
+
+  @@index([status])
+  @@map("users")
+}

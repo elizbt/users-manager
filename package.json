@@ -1,0 +1,33 @@
+{
+	"type": "module",
+	"scripts": {
+		"dev": "tsx watch server/src/server.ts",
+		"build": "prisma generate && tsc",
+		"start": "node dist/server.js",
+		"db:migrate": "prisma migrate deploy",
+		"db:seed": "prisma db seed",
+		"test": "vitest run",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"check": "biome check ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.5.7",
+		"@types/node": "^26.1.2",
+		"@types/pg": "^8.20.4",
+		"@vitest/coverage-v8": "^4.1.10",
+		"dotenv": "^17.4.2",
+		"prisma": "^7.9.1",
+		"tsx": "^4.23.8",
+		"typescript": "^7.0.2",
+		"vitest": "^4.1.10"
+	},
+	"dependencies": {
+		"@fastify/cors": "^11.3.0",
+		"@prisma/adapter-pg": "^7.9.1",
+		"@prisma/client": "^7.9.1",
+		"fastify": "^5.11.2",
+		"pg": "^8.22.0",
+		"zod": "^4.4.3"
+	}
+}
