@@ -51,6 +51,25 @@ afterEach(async () => {
 });
 
 describe("Rotas de usuários", () => {
+	it.each(["PATCH", "DELETE"])(
+		"deve permitir %s nas requisições CORS",
+		async (method) => {
+			const response = await app.inject({
+				method: "OPTIONS",
+				url: "/api/users/1",
+				headers: {
+					origin: "http://localhost:5173",
+					"access-control-request-method": method,
+				},
+			});
+
+			expect(response.statusCode).toBe(204);
+			expect(response.headers["access-control-allow-methods"]).toContain(
+				method,
+			);
+		},
+	);
+
 	it("deve listar usuários e encaminhar os filtros", async () => {
 		vi.mocked(findUsers).mockResolvedValue(emptyResult);
 
