@@ -20,7 +20,6 @@ model User {
   species    String     @db.VarChar(100)
   originName String     @map("origin_name")
   originUrl  String     @map("origin_url")
-  image      String
   episode    String[]   @default([])
   createdAt  DateTime   @map("created_at") @db.Timestamptz(3)
 

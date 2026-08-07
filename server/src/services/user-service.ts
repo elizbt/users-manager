@@ -12,7 +12,6 @@ function mapUser(user: DatabaseUser): User {
 		name: user.name,
 		status: user.status,
 		species: user.species,
-		image: user.image,
 		episode: user.episode,
 		origin: {
 			name: user.originName,

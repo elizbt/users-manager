@@ -10,7 +10,6 @@ export interface User {
 	name: string;
 	status: UserStatus;
 	species: string;
-	image: string;
 	episode: string[];
 	origin: UserOrigin;
 	createdAt: string;

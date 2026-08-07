@@ -5,7 +5,6 @@ const characterSchema = z.object({
 	name: z.string(),
 	status: z.enum(["Alive", "Dead", "unknown"]),
 	species: z.string(),
-	image: z.string(),
 	episode: z.array(z.string()),
 	origin: z.object({
 		name: z.string(),

@@ -15,7 +15,6 @@ try {
 						species: character.species,
 						originName: character.origin.name,
 						originUrl: character.origin.url,
-						image: character.image,
 						episode: character.episode,
 						createdAt: character.created,
 					},
