@@ -1,33 +1,15 @@
-import { z } from "zod";
-
-const characterSchema = z.object({
-	id: z.number(),
-	name: z.string(),
-	status: z.enum(["Alive", "Dead", "unknown"]),
-	species: z.string(),
-	episode: z.array(z.string()),
-	origin: z.object({
-		name: z.string(),
-		url: z.string(),
-	}),
-	created: z.string(),
-});
-
-const apiResponseSchema = z.object({
-	info: z.object({
-		pages: z.number(),
-	}),
-	results: z.array(characterSchema),
-});
-
-export type RickAndMortyCharacter = z.infer<typeof characterSchema>;
+import {
+	type RickAndMortyCharacter,
+	rickAndMortyResponseSchema,
+} from "../schemas/rick-and-morty-schemas.js";
 
 const pageBatchSize = 3;
 const maxFetchAttempts = 5;
-const requestTimeout = 10_000;
-const batchDelay = 500;
+const requestTimeoutMs = 10_000;
+const retryBaseDelayMs = 1_000;
+const batchDelayMs = 500;
 
-function wait(milliseconds: number): Promise<void> {
+function delay(milliseconds: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
@@ -40,7 +22,7 @@ async function fetchPage(page: number) {
 		try {
 			response = await fetch(
 				`https://rickandmortyapi.com/api/character?page=${page}`,
-				{ signal: AbortSignal.timeout(requestTimeout) },
+				{ signal: AbortSignal.timeout(requestTimeoutMs) },
 			);
 		} catch (error) {
 			lastError = error;
@@ -49,12 +31,12 @@ async function fetchPage(page: number) {
 				throw error;
 			}
 
-			await wait(attempt * 1_000);
+			await delay(attempt * retryBaseDelayMs);
 			continue;
 		}
 
 		if (response.ok) {
-			return apiResponseSchema.parse(await response.json());
+			return rickAndMortyResponseSchema.parse(await response.json());
 		}
 
 		lastError = new Error(
@@ -70,10 +52,10 @@ async function fetchPage(page: number) {
 		}
 
 		const retryAfter = Number(response.headers.get("retry-after"));
-		await wait(
+		await delay(
 			Number.isFinite(retryAfter) && retryAfter > 0
-				? retryAfter * 1_000
-				: attempt * 1_000,
+				? retryAfter * retryBaseDelayMs
+				: attempt * retryBaseDelayMs,
 		);
 	}
 
@@ -93,6 +75,9 @@ export async function fetchCharacters(
 		);
 		const responses = await Promise.all(pages.map(fetchPage));
 		await onBatch(responses.flatMap((response) => response.results));
-		await wait(batchDelay);
+
+		if (page + pages.length <= firstPage.info.pages) {
+			await delay(batchDelayMs);
+		}
 	}
 }

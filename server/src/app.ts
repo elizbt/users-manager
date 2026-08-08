@@ -7,7 +7,9 @@ export function buildApp() {
 		logger: true,
 	});
 
-	app.register(cors);
+	app.register(cors, {
+		methods: ["GET", "PATCH", "DELETE", "OPTIONS"],
+	});
 
 	app.register(userRoutes, {
 		prefix: "/api/users",

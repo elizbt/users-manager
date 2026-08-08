@@ -1,4 +1,11 @@
 import { z } from "zod";
+import type { UserStatus } from "../../../shared/types/user.js";
+
+const normalizedStatus = {
+	alive: "Alive",
+	dead: "Dead",
+	unknown: "unknown",
+} as const satisfies Record<Lowercase<UserStatus>, UserStatus>;
 
 export const listUsersQuerySchema = z.object({
 	name: z.string().trim().min(1).optional(),
@@ -8,6 +15,7 @@ export const listUsersQuerySchema = z.object({
 		.trim()
 		.toLowerCase()
 		.pipe(z.enum(["alive", "dead", "unknown"]))
+		.transform((status) => normalizedStatus[status])
 		.optional(),
 
 	page: z.coerce.number().int().positive().default(1),

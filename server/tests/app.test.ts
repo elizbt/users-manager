@@ -1,12 +1,12 @@
 import type { FastifyInstance } from "fastify";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { PaginatedUsers, User } from "../../shared/types/user.js";
 import { buildApp } from "../src/app.js";
 import {
 	deleteUser,
 	findUsers,
 	updateUserName,
 } from "../src/services/user-service.js";
-import type { PaginatedUsers, User } from "../src/types/user.js";
 
 vi.mock("../src/services/user-service.js", () => ({
 	findUsers: vi.fn(),
@@ -51,6 +51,25 @@ afterEach(async () => {
 });
 
 describe("Rotas de usuários", () => {
+	it.each(["PATCH", "DELETE"])(
+		"deve permitir %s nas requisições CORS",
+		async (method) => {
+			const response = await app.inject({
+				method: "OPTIONS",
+				url: "/api/users/1",
+				headers: {
+					origin: "http://localhost:5173",
+					"access-control-request-method": method,
+				},
+			});
+
+			expect(response.statusCode).toBe(204);
+			expect(response.headers["access-control-allow-methods"]).toContain(
+				method,
+			);
+		},
+	);
+
 	it("deve listar usuários e encaminhar os filtros", async () => {
 		vi.mocked(findUsers).mockResolvedValue(emptyResult);
 
@@ -63,7 +82,7 @@ describe("Rotas de usuários", () => {
 
 		expect(findUsers).toHaveBeenCalledWith({
 			name: "Rick",
-			status: "alive",
+			status: "Alive",
 			page: 1,
 			limit: 10,
 		});

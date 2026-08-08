@@ -6,7 +6,7 @@ const port = Number(process.env.PORT) || 3000;
 
 async function startServer(): Promise<void> {
 	try {
-		await prisma.user.count();
+		await prisma.$connect();
 		app.addHook("onClose", async () => {
 			await prisma.$disconnect();
 		});
