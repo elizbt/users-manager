@@ -9,7 +9,7 @@ export default defineConfig({
 	},
 	test: {
 		environment: "jsdom",
-		setupFiles: "./client/src/test/setup.ts",
 		css: true,
+		setupFiles: "./client/src/test/setup.ts",
 	},
 });
