@@ -41,7 +41,7 @@ export function DeleteUserDialog({
 			</p>
 			<div className="mt-6 flex items-center justify-between border-[#e5e7e7] border-t-2 pt-6">
 				<button
-					className="min-h-10 rounded-lg border-0 bg-transparent py-2 pr-[22px] pl-0 text-body"
+					className="min-h-10 rounded-lg border-0 bg-transparent py-2 pr-[22px] pl-0 text-brand underline underline-offset-3"
 					type="button"
 					disabled={isPending}
 					onClick={onClose}

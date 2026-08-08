@@ -6,40 +6,45 @@ import { Pagination } from "../components/users/pagination";
 import { UserFilters } from "../components/users/user-filters";
 import { UsersTable } from "../components/users/users-table";
 import { useDeleteUser, useUpdateUserName, useUsers } from "../hooks/use-users";
+import { useUsersListState } from "../hooks/use-users-list-state";
 import { getApiErrorMessage } from "../lib/api";
-import type { User, UserStatusFilter } from "../types/user";
+import type { User } from "../types/user";
 
 const feedbackClassName =
 	"rounded-lg border border-[#d7dada] border-dashed px-6 py-12 text-center";
 
 export function UsersPage() {
-	const [name, setName] = useState("");
-	const [status, setStatus] = useState<UserStatusFilter>("");
-	const [filters, setFilters] = useState({
-		name: "",
-		status: "" as UserStatusFilter,
-	});
-	const [page, setPage] = useState(1);
-	const [limit, setLimit] = useState(10);
+	const listState = useUsersListState();
 	const [editingUser, setEditingUser] = useState<User | null>(null);
 	const [deletingUser, setDeletingUser] = useState<User | null>(null);
 	const [toast, setToast] = useState<{
 		type: "success" | "error";
 		message: string;
 	} | null>(null);
-	const usersQuery = useUsers({ ...filters, page, limit });
+	const usersQuery = useUsers(listState.queryParams);
 	const updateMutation = useUpdateUserName();
 	const deleteMutation = useDeleteUser();
-	const closeEditDialog = useCallback(() => setEditingUser(null), []);
-	const closeDeleteDialog = useCallback(() => setDeletingUser(null), []);
 	const closeToast = useCallback(() => setToast(null), []);
 
 	useEffect(() => {
+		if (usersQuery.isPlaceholderData) return;
+
 		const totalPages = usersQuery.data?.pagination.totalPages;
-		if (totalPages !== undefined && totalPages > 0 && page > totalPages) {
-			setPage(totalPages);
-		}
-	}, [page, usersQuery.data?.pagination.totalPages]);
+		if (totalPages === undefined) return;
+		listState.correctPage(totalPages);
+	}, [
+		listState.correctPage,
+		usersQuery.data?.pagination.totalPages,
+		usersQuery.isPlaceholderData,
+	]);
+
+	function closeEditDialog() {
+		setEditingUser(null);
+	}
+
+	function closeDeleteDialog() {
+		setDeletingUser(null);
+	}
 
 	function openEditDialog(user: User) {
 		updateMutation.reset();
@@ -49,16 +54,6 @@ export function UsersPage() {
 	function openDeleteDialog(user: User) {
 		deleteMutation.reset();
 		setDeletingUser(user);
-	}
-
-	function handleSearch() {
-		setPage(1);
-		setFilters({ name: name.trim(), status });
-	}
-
-	function handleLimitChange(newLimit: number) {
-		setPage(1);
-		setLimit(newLimit);
 	}
 
 	function handleRetry() {
@@ -105,44 +100,52 @@ export function UsersPage() {
 					User Management
 				</h1>
 				<UserFilters
-					name={name}
-					status={status}
-					onNameChange={setName}
-					onStatusChange={setStatus}
-					onSearch={handleSearch}
+					name={listState.name}
+					status={listState.status}
+					onNameChange={listState.handleNameChange}
+					onStatusChange={listState.handleStatusChange}
+					onStatusClear={listState.handleStatusClear}
+					onSearch={listState.handleSearch}
 				/>
 
-				{usersQuery.isPending ? (
-					<p className={feedbackClassName} role="status">
-						Loading users...
-					</p>
-				) : usersQuery.isError ? (
-					<section className={feedbackClassName} role="alert">
-						<p>{getApiErrorMessage(usersQuery.error)}</p>
-						<button
-							className="min-h-10 rounded-lg border border-brand bg-white px-4 py-2 text-brand"
-							type="button"
-							onClick={handleRetry}
-						>
-							Try again
-						</button>
-					</section>
-				) : usersQuery.data.data.length === 0 ? (
-					<p className={feedbackClassName}>No users found.</p>
-				) : (
-					<>
-						<UsersTable
-							users={usersQuery.data.data}
-							onEdit={openEditDialog}
-							onDelete={openDeleteDialog}
-						/>
-						<Pagination
-							pagination={usersQuery.data.pagination}
-							onPageChange={setPage}
-							onLimitChange={handleLimitChange}
-						/>
-					</>
-				)}
+				<div className="min-w-0" aria-busy={usersQuery.isFetching}>
+					{usersQuery.isFetching && !usersQuery.isPending ? (
+						<span className="sr-only" role="status">
+							Updating users...
+						</span>
+					) : null}
+					{usersQuery.isPending ? (
+						<p className={feedbackClassName} role="status">
+							Loading users...
+						</p>
+					) : usersQuery.isError ? (
+						<section className={feedbackClassName} role="alert">
+							<p>{getApiErrorMessage(usersQuery.error)}</p>
+							<button
+								className="min-h-10 rounded-lg border border-brand bg-white px-4 py-2 text-brand"
+								type="button"
+								onClick={handleRetry}
+							>
+								Try again
+							</button>
+						</section>
+					) : usersQuery.data.data.length === 0 ? (
+						<p className={feedbackClassName}>No users found.</p>
+					) : (
+						<>
+							<UsersTable
+								users={usersQuery.data.data}
+								onEdit={openEditDialog}
+								onDelete={openDeleteDialog}
+							/>
+							<Pagination
+								pagination={usersQuery.data.pagination}
+								onPageChange={listState.handlePageChange}
+								onLimitChange={listState.handleLimitChange}
+							/>
+						</>
+					)}
+				</div>
 			</section>
 
 			{editingUser ? (

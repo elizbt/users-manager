@@ -11,7 +11,7 @@ import {
 } from "../services/users-service";
 import type { ListUsersParams } from "../types/user";
 
-export const usersQueryKey = ["users"] as const;
+const usersQueryKey = ["users"] as const;
 
 export function useUsers(filters: ListUsersParams) {
 	return useQuery({

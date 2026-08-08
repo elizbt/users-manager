@@ -15,7 +15,7 @@ export function Toast({ type, message, onClose }: ToastProps) {
 
 	return (
 		<div
-			className={`fixed top-6 right-6 z-20 flex w-max max-w-[calc(100vw_-_48px)] animate-[toast-in_180ms_ease-out] items-center gap-[10px] rounded-lg px-4 py-[14px] text-white shadow-[0_8px_24px_rgb(0_0_0_/_18%)] max-[560px]:right-3 max-[560px]:max-w-[calc(100vw_-_24px)] ${type === "success" ? "bg-success" : "bg-danger"}`}
+			className={`fixed top-6 right-6 z-20 flex w-max max-w-[calc(100vw_-_48px)] animate-[toast-in_180ms_ease-out] items-center gap-[10px] rounded-lg px-4 py-[14px] text-white shadow-[0_8px_24px_rgb(0_0_0_/_18%)] motion-reduce:animate-none max-[560px]:right-3 max-[560px]:max-w-[calc(100vw_-_24px)] ${type === "success" ? "bg-success" : "bg-danger"}`}
 			role={type === "error" ? "alert" : "status"}
 		>
 			{type === "success" ? (

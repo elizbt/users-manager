@@ -1,3 +1,4 @@
+import { PAGE_SIZE_OPTIONS } from "../../constants/users";
 import type { PaginationMeta } from "../../types/user";
 
 interface PaginationProps {
@@ -125,10 +126,11 @@ export function Pagination({
 					value={pagination.limit}
 					onChange={(event) => onLimitChange(Number(event.target.value))}
 				>
-					<option value="10">10</option>
-					<option value="15">15</option>
-					<option value="25">25</option>
-					<option value="50">50</option>
+					{PAGE_SIZE_OPTIONS.map((pageSize) => (
+						<option key={pageSize} value={pageSize}>
+							{pageSize}
+						</option>
+					))}
 				</select>
 				per page
 			</label>

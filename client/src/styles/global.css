@@ -7,6 +7,7 @@
 	--element-default: #575b5b;
 	--element-bold: #1a1b1b;
 	--background-blanket: #00000066;
+	--interaction-default: #0000001a;
 	font-family:
 		Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	color: var(--element-default);
@@ -21,6 +22,7 @@
 	--color-body: var(--element-default);
 	--color-heading: var(--element-bold);
 	--color-blanket: var(--background-blanket);
+	--color-interaction: var(--interaction-default);
 }
 
 html,
